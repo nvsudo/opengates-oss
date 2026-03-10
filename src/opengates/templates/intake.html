@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ gate.title }}</title>
+    <style>
+      body { font-family: Georgia, serif; margin: 3rem auto; max-width: 760px; padding: 0 1rem; color: #1e1e1e; background: #fffdf8; }
+      h1 { margin-bottom: 0.4rem; }
+      p { line-height: 1.5; }
+      label { display: block; margin-top: 1rem; font-weight: 700; }
+      input, textarea { width: 100%; padding: 0.85rem; border: 1px solid #cabfa9; border-radius: 10px; font: inherit; box-sizing: border-box; background: #fff; }
+      textarea { min-height: 180px; }
+      .checkbox { display: flex; gap: 0.6rem; align-items: center; margin-top: 1rem; }
+      .checkbox input { width: auto; }
+      button { margin-top: 1.2rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 10px; background: #0f5b4f; color: white; font: inherit; cursor: pointer; }
+      .note { background: #f6efe1; border-radius: 10px; padding: 0.9rem 1rem; margin-top: 1rem; }
+      .subtle { color: #64615a; }
+    </style>
+  </head>
+  <body>
+    <a href="/">All gates</a>
+    <h1>{{ gate.title }}</h1>
+    <p>This gate starts a bounded conversation thread. It may ask follow-up questions before it declines or escalates.</p>
+    <div class="note">
+      <div>Recommended clarification depth for this gate: <strong>{{ gate.config.max_clarification_rounds }}</strong></div>
+      <div class="subtle">Inbox access is not required. This thread lives on the gate itself.</div>
+    </div>
+    <div class="note">
+      {% if gate.config.payment_enabled %}
+        Priority review is enabled for this gate. Payment is treated as a seriousness signal, not a guaranteed pass.
+      {% else %}
+        This gate is currently running without payment priority.
+      {% endif %}
+    </div>
+    <form method="post" action="/g/{{ gate.gate_id }}/threads">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" placeholder="Your name">
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Optional. Used only if you want a later handoff.">
+
+      <label for="content">What do you want to send through this gate?</label>
+      <textarea id="content" name="content" placeholder="Context, ask, links, and any relevant detail." required></textarea>
+
+      {% if gate.config.payment_enabled %}
+        <label class="checkbox" for="priority_paid">
+          <input id="priority_paid" name="priority_paid" type="checkbox" value="true">
+          <span>Mark this as paid priority review</span>
+        </label>
+      {% endif %}
+
+      <button type="submit">Start thread</button>
+    </form>
+  </body>
+</html>

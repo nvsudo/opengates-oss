@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ gate.title }} Thread</title>
+    <style>
+      body { font-family: Georgia, serif; margin: 2rem auto 4rem; max-width: 860px; padding: 0 1rem; color: #1e1e1e; background: linear-gradient(180deg, #fffdf8 0%, #f7f1e6 100%); }
+      .header { margin-bottom: 1.5rem; }
+      .meta { color: #64615a; margin-top: 0.4rem; }
+      .thread { display: grid; gap: 0.9rem; }
+      .message { padding: 1rem 1.1rem; border-radius: 14px; max-width: 82%; line-height: 1.5; }
+      .sender { background: #0f5b4f; color: white; margin-left: auto; }
+      .gate { background: #fff7e8; border: 1px solid #d9d1bf; }
+      .system { background: #efe7d8; border: 1px dashed #c3b79e; }
+      .label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; opacity: 0.8; }
+      .panel { background: rgba(255,255,255,0.7); border: 1px solid #ddd3c1; border-radius: 14px; padding: 1rem 1.1rem; margin: 1rem 0; }
+      textarea { width: 100%; min-height: 140px; padding: 0.85rem; border: 1px solid #cabfa9; border-radius: 10px; font: inherit; box-sizing: border-box; }
+      button { margin-top: 0.8rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 10px; background: #0f5b4f; color: white; font: inherit; cursor: pointer; }
+      a { color: #0f5b4f; }
+      .status { font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <a href="{{ gate.public_path }}">Start a new thread</a>
+      <h1>{{ gate.title }}</h1>
+      <div class="meta">
+        <span class="status">Status: {{ thread_view.thread.status }}</span>
+        · Remaining clarification rounds: {{ thread_view.thread.remaining_clarification_rounds }}
+        · Thread: {{ thread_view.thread.thread_id }}
+      </div>
+    </div>
+
+    {% if thread_view.thread.status == "escalated" %}
+      <div class="panel">This thread has been escalated for review.</div>
+    {% elif thread_view.thread.status == "review" %}
+      <div class="panel">This thread hit a review state and needs manual attention.</div>
+    {% elif thread_view.thread.status == "declined" %}
+      <div class="panel">This thread has been closed.</div>
+    {% endif %}
+
+    <div class="thread">
+      {% for message in thread_view.messages %}
+        <div class="message {{ message.role }}">
+          <div class="label">{{ message.role }}</div>
+          <div>{{ message.content }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if thread_view.latest_decision %}
+      <div class="panel">
+        <div><strong>Latest decision:</strong> {{ thread_view.latest_decision.decision }}</div>
+        <div><strong>Confidence:</strong> {{ "%.2f"|format(thread_view.latest_decision.confidence) }}</div>
+        <div><strong>Private reason:</strong> {{ thread_view.latest_decision.private_reason }}</div>
+      </div>
+    {% endif %}
+
+    {% if not thread_closed %}
+      <form method="post" action="/t/{{ thread_view.thread.thread_id }}/reply">
+        <label for="content"><strong>Reply to this thread</strong></label>
+        <textarea id="content" name="content" placeholder="Answer the gate's latest question." required></textarea>
+        <button type="submit">Send reply</button>
+      </form>
+    {% endif %}
+  </body>
+</html>

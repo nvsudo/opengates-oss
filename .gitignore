@@ -1,0 +1,10 @@
+.env
+.env.local
+.venv/
+src/*.egg-info/
+data/history/*.jsonl
+data/profiles/*.json
+data/threads/*.json
+data/thread_messages/*.jsonl
+__pycache__/
+.pytest_cache/

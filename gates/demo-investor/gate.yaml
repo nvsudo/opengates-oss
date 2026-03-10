@@ -1,0 +1,10 @@
+gate_id: demo-investor
+title: Demo Investor Gate
+public_path: /demo
+payment_enabled: true
+charge_enabled: false
+clarify_threshold: 0.55
+escalate_threshold: 0.8
+escalation_channel: log
+max_clarification_rounds: 3
+thread_expiry_hours: 168

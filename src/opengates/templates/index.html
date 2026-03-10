@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OpenGates</title>
+    <style>
+      body { font-family: Georgia, serif; margin: 3rem auto; max-width: 760px; padding: 0 1rem; color: #1e1e1e; }
+      h1 { margin-bottom: 0.5rem; }
+      ul { padding-left: 1.1rem; }
+      a { color: #0f5b4f; }
+      .card { border: 1px solid #d9d1bf; border-radius: 12px; padding: 1rem 1.25rem; margin: 1rem 0; background: #faf5eb; }
+    </style>
+  </head>
+  <body>
+    <h1>OpenGates</h1>
+    <p>Available gates on this runtime.</p>
+    {% for gate in gates %}
+      <div class="card">
+        <strong>{{ gate.title }}</strong>
+        <div><a href="{{ gate.public_path }}">Open gate</a></div>
+      </div>
+    {% else %}
+      <p>No gates found.</p>
+    {% endfor %}
+  </body>
+</html>

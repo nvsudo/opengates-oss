@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ gate.title }} Result</title>
+    <style>
+      body { font-family: Georgia, serif; margin: 3rem auto; max-width: 760px; padding: 0 1rem; color: #1e1e1e; background: #fffdf8; }
+      .card { border: 1px solid #d9d1bf; border-radius: 12px; padding: 1rem 1.25rem; background: #faf5eb; margin: 1rem 0; }
+      .label { color: #64615a; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+      .decision { font-size: 1.4rem; font-weight: 700; }
+      a { color: #0f5b4f; }
+      pre { white-space: pre-wrap; font-family: inherit; }
+    </style>
+  </head>
+  <body>
+    <a href="/g/{{ gate.gate_id }}">Back to gate</a>
+    <div class="card">
+      <div class="label">Decision</div>
+      <div class="decision">{{ processed.decision.decision }}</div>
+      <p>Confidence: {{ "%.2f"|format(processed.decision.confidence) }}</p>
+      {% if processed.decision.user_visible_reply %}
+        <div class="label">Reply</div>
+        <pre>{{ processed.decision.user_visible_reply }}</pre>
+      {% endif %}
+      <div class="label">Private Reason</div>
+      <pre>{{ processed.decision.private_reason }}</pre>
+    </div>
+  </body>
+</html>
