@@ -18,18 +18,18 @@
     </style>
   </head>
   <body>
-    <a href="/">All gates</a>
+    <a href="/">All intakes</a>
     <h1>{{ gate.title }}</h1>
-    <p>This gate starts a bounded conversation thread. It may ask follow-up questions before it declines or escalates.</p>
+    <p>This {{ gate.surface_label }} starts a bounded conversation. It may ask follow-up questions before it declines or escalates.</p>
     <div class="note">
-      <div>Recommended clarification depth for this gate: <strong>{{ gate.config.max_clarification_rounds }}</strong></div>
-      <div class="subtle">Inbox access is not required. This thread lives on the gate itself.</div>
+      <div>Recommended clarification depth for this {{ gate.surface_label }}: <strong>{{ gate.config.max_clarification_rounds }}</strong></div>
+      <div class="subtle">Inbox access is not required. This conversation stays in this thread.</div>
     </div>
     <div class="note">
       {% if gate.config.payment_enabled %}
-        Priority review is enabled for this gate. Payment is treated as a seriousness signal, not a guaranteed pass.
+        Priority review is enabled for this {{ gate.surface_label }}. Payment is treated as a seriousness signal, not a guaranteed pass.
       {% else %}
-        This gate is currently running without payment priority.
+        This {{ gate.surface_label }} is currently running without payment priority.
       {% endif %}
     </div>
     <form method="post" action="/g/{{ gate.gate_id }}/threads">
@@ -39,7 +39,7 @@
       <label for="email">Email</label>
       <input id="email" name="email" type="email" placeholder="Optional. Used only if you want a later handoff.">
 
-      <label for="content">What do you want to send through this gate?</label>
+      <label for="content">What do you want to send through this {{ gate.surface_label }}?</label>
       <textarea id="content" name="content" placeholder="Context, ask, links, and any relevant detail." required></textarea>
 
       {% if gate.config.payment_enabled %}
@@ -49,7 +49,7 @@
         </label>
       {% endif %}
 
-      <button type="submit">Start thread</button>
+      <button type="submit">Start conversation</button>
     </form>
   </body>
 </html>

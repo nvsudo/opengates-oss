@@ -13,14 +13,14 @@
   </head>
   <body>
     <h1>OpenGates</h1>
-    <p>Available gates on this runtime.</p>
+    <p>Available public intakes on this runtime.</p>
     {% for gate in gates %}
       <div class="card">
         <strong>{{ gate.title }}</strong>
-        <div><a href="{{ gate.public_path }}">Open gate</a></div>
+        <div><a href="{{ gate.public_path }}">Open intake</a></div>
       </div>
     {% else %}
-      <p>No gates found.</p>
+      <p>No intakes found.</p>
     {% endfor %}
   </body>
 </html>

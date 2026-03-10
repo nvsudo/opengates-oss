@@ -82,7 +82,14 @@ These files define:
 - what quality bar must be met
 - how replies should sound
 - examples that sharpen the gate's judgment
-- thread depth and route behavior through `gate.yaml`
+- thread depth, public naming, and route behavior through `gate.yaml`
+
+Useful `gate.yaml` fields:
+- `title`: public page title such as `Investor Desk`
+- `assistant_name`: label shown on assistant replies in the reference UI
+- `surface_label`: softer public noun for copy like `desk` or `briefing desk`
+- `public_path`: public route for the intake
+- `max_clarification_rounds`: bounded depth for follow-up turns
 
 ## Current Runtime
 The current MVP ships with a deterministic heuristic provider so the system runs out of the box. The provider boundary is explicit so a real model adapter can replace it without changing the thread engine, storage, or gate bundle contract.

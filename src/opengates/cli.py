@@ -68,6 +68,8 @@ def rename_gate_yaml(target_path: Path, gate_id: str) -> None:
             updated.append(f"gate_id: {gate_id}")
         elif line.startswith("title:"):
             updated.append(f"title: {gate_id.replace('-', ' ').title()}")
+        elif line.startswith("assistant_name:"):
+            updated.append(f"assistant_name: {gate_id.replace('-', ' ').title()}")
         else:
             updated.append(line)
     gate_yaml.write_text("\n".join(updated) + "\n", encoding="utf-8")

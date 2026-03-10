@@ -15,6 +15,8 @@ BULLET_RE = re.compile(r"^\s*[-*]\s+(?P<item>.+?)\s*$")
 class GateConfig(BaseModel):
     gate_id: str
     title: str = ""
+    assistant_name: str = ""
+    surface_label: str = "desk"
     public_path: str | None = None
     payment_enabled: bool = False
     charge_enabled: bool = False
@@ -44,6 +46,14 @@ class GateBundle:
     @property
     def title(self) -> str:
         return self.config.title or self.gate_id.replace("-", " ").title()
+
+    @property
+    def assistant_name(self) -> str:
+        return self.config.assistant_name or self.title
+
+    @property
+    def surface_label(self) -> str:
+        return (self.config.surface_label or "desk").strip() or "desk"
 
     @property
     def public_path(self) -> str:

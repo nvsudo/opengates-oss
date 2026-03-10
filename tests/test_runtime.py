@@ -83,7 +83,9 @@ def test_http_thread_routes_work(monkeypatch, tmp_path) -> None:
 
     response = client.get("/demo")
     assert response.status_code == 200
-    assert "Start thread" in response.text
+    assert "Investor Desk" in response.text
+    assert "Start conversation" in response.text
+    assert "This desk starts a bounded conversation." in response.text
 
     create = client.post(
         "/api/gates/demo-investor/threads",
@@ -111,3 +113,4 @@ def test_thread_page_hides_private_reason(monkeypatch, tmp_path) -> None:
     page = client.get(f"/t/{thread_id}")
     assert page.status_code == 200
     assert "Private reason" not in page.text
+    assert "Investor Desk" in page.text

@@ -1,5 +1,7 @@
 gate_id: demo-investor
-title: Demo Investor Gate
+title: Investor Desk
+assistant_name: Investor Desk
+surface_label: desk
 public_path: /demo
 payment_enabled: true
 charge_enabled: false

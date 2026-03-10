@@ -22,12 +22,12 @@
   </head>
   <body>
     <div class="header">
-      <a href="{{ gate.public_path }}">Start a new thread</a>
+      <a href="{{ gate.public_path }}">Start a new conversation</a>
       <h1>{{ gate.title }}</h1>
       <div class="meta">
         <span class="status">Status: {{ thread_view.thread.status }}</span>
         · Remaining clarification rounds: {{ thread_view.thread.remaining_clarification_rounds }}
-        · Thread: {{ thread_view.thread.thread_id }}
+        · Ref: {{ thread_view.thread.thread_id }}
       </div>
     </div>
 
@@ -42,7 +42,15 @@
     <div class="thread">
       {% for message in thread_view.messages %}
         <div class="message {{ message.role }}">
-          <div class="label">{{ message.role }}</div>
+          <div class="label">
+            {% if message.role == "sender" %}
+              You
+            {% elif message.role == "gate" %}
+              {{ gate.assistant_name }}
+            {% else %}
+              System
+            {% endif %}
+          </div>
           <div>{{ message.content }}</div>
         </div>
       {% endfor %}
@@ -57,8 +65,8 @@
 
     {% if not thread_closed %}
       <form method="post" action="/t/{{ thread_view.thread.thread_id }}/reply">
-        <label for="content"><strong>Reply to this thread</strong></label>
-        <textarea id="content" name="content" placeholder="Answer the gate's latest question." required></textarea>
+        <label for="content"><strong>Reply to this conversation</strong></label>
+        <textarea id="content" name="content" placeholder="Answer the latest question." required></textarea>
         <button type="submit">Send reply</button>
       </form>
     {% endif %}
