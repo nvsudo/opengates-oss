@@ -17,6 +17,24 @@ SPAM_MARKERS = {
     "cold outreach agency",
 }
 
+UNSERIOUS_MARKERS = {
+    "hahaha",
+    "lmao",
+    "rofl",
+    "just give me money",
+    "get your money",
+    "your money",
+}
+
+ROLE_CONFUSION_MARKERS = {
+    "resume",
+    "cv",
+    "job application",
+    "ea position",
+    "executive assistant",
+    "assistant role",
+}
+
 
 class HeuristicDecisionProvider(DecisionProvider):
     def decide(self, context: DecisionContext) -> Decision:
@@ -78,8 +96,14 @@ class HeuristicDecisionProvider(DecisionProvider):
     def obvious_reject(self, context: DecisionContext) -> Decision | None:
         content = " ".join(context.current_message.content.split())
         lowered = content.lower()
+        focus_hits = self._match_focus(context.gate.focus_items, lowered)
         reject_rules = self._section_items(context, "reject")
-        if self._matches_any(lowered, SPAM_MARKERS) or self._matches_any(lowered, reject_rules):
+        if (
+            self._matches_any(lowered, SPAM_MARKERS)
+            or self._matches_any(lowered, reject_rules)
+            or self._is_unserious_or_bad_faith(lowered)
+            or self._is_role_confused_for_gate(context, lowered, focus_hits)
+        ):
             return self._build_decision(
                 context,
                 decision="decline",
@@ -146,6 +170,52 @@ class HeuristicDecisionProvider(DecisionProvider):
         if len(lowered) < 220:
             return "request is too generic"
         return None
+
+    @staticmethod
+    def _is_unserious_or_bad_faith(lowered: str) -> bool:
+        if any(marker in lowered for marker in UNSERIOUS_MARKERS):
+            if not HeuristicDecisionProvider._contains_structured_signal(lowered):
+                return True
+        if "pitch" in lowered and "money" in lowered and not HeuristicDecisionProvider._contains_structured_signal(lowered):
+            return True
+        return False
+
+    @staticmethod
+    def _is_role_confused_for_gate(context: DecisionContext, lowered: str, focus_hits: list[str]) -> bool:
+        gate_text = " ".join(context.gate.focus_items).lower()
+        if any(token in gate_text for token in ("hiring", "recruit", "candidate", "executive assistant", "ea")):
+            return False
+        if any(marker in lowered for marker in ROLE_CONFUSION_MARKERS):
+            return True
+        if "hiring" in lowered and not focus_hits and not HeuristicDecisionProvider._contains_structured_signal(lowered):
+            return True
+        return False
+
+    @staticmethod
+    def _contains_structured_signal(lowered: str) -> bool:
+        return any(
+            token in lowered
+            for token in (
+                "problem",
+                "customer",
+                "customers",
+                "user",
+                "users",
+                "product",
+                "company",
+                "startup",
+                "founder",
+                "revenue",
+                "mrr",
+                "arr",
+                "traction",
+                "growth",
+                "pilot",
+                "deck",
+                "intro",
+                "market",
+            )
+        )
 
     @staticmethod
     def _match_focus(focus_items: list[str], lowered: str) -> list[str]:

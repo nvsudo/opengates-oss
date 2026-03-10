@@ -65,6 +65,18 @@ def test_clarification_limit_forces_review(monkeypatch, tmp_path) -> None:
     assert second.thread.status == "review"
 
 
+def test_bait_message_declines(monkeypatch, tmp_path) -> None:
+    runtime = build_runtime(monkeypatch, tmp_path)
+    processed = runtime.start_thread(
+        "demo-investor",
+        name="Troll",
+        email="troll@example.com",
+        content="I want to sell to you and pitch to you. to get your money. hahahaha....",
+    )
+    assert processed.decision.decision == "decline"
+    assert processed.thread.status == "declined"
+
+
 def test_http_thread_routes_work(monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("OPENGATES_DATA_DIR", str(tmp_path / "data"))
     client = TestClient(create_app())
@@ -83,3 +95,19 @@ def test_http_thread_routes_work(monkeypatch, tmp_path) -> None:
     view = client.get(f"/api/threads/{thread_id}")
     assert view.status_code == 200
     assert view.json()["thread"]["thread_id"] == thread_id
+
+
+def test_thread_page_hides_private_reason(monkeypatch, tmp_path) -> None:
+    monkeypatch.setenv("OPENGATES_DATA_DIR", str(tmp_path / "data"))
+    client = TestClient(create_app())
+
+    create = client.post(
+        "/api/gates/demo-investor/threads",
+        json={"name": "Founder", "email": "private@example.com", "content": "I am building an AI startup and would love to connect."},
+    )
+    assert create.status_code == 200
+    thread_id = create.json()["thread"]["thread_id"]
+
+    page = client.get(f"/t/{thread_id}")
+    assert page.status_code == 200
+    assert "Private reason" not in page.text
